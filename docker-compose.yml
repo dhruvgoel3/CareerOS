@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: infrastructure/Dockerfile.backend
+    container_name: careeros-backend
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - NODE_ENV=production
+      - JWT_SECRET=careeros_super_secret_jwt_key_2026
+      - CLIENT_URL=http://localhost:5173
+    networks:
+      - careeros-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: infrastructure/Dockerfile.frontend
+    container_name: careeros-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - careeros-network
+
+networks:
+  careeros-network:
+    driver: bridge
